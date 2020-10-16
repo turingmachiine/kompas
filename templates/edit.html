@@ -1,0 +1,54 @@
+{% extends 'profile.html' %}
+{% block profile_content %}
+
+    <section class="page-section" id="borrow">
+        <div class="container">
+            <h2 class="text-center mt-0">Изменение профиля</h2>
+            <hr class="divider my-4"/>
+            <form id="edit-form" name="edit-form" action="{% url 'edit' %}" method="post"
+                  enctype="multipart/form-data">
+                {% csrf_token %}
+                <div class="form-row">
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.last_name.id_for_label }}">Фамилия:</label>
+                        <input class="form-control" type="text" name="last_name" value="{{ user.last_name }}" maxlength="255" required=""
+                               id="id_last_name">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.first_name.id_for_label }}">Имя:</label>
+                        <input class="form-control" type="text" name="first_name" value="{{ user.first_name }}" maxlength="255" required=""
+                               id="id_first_name">
+                    </div>
+                    <div class="form-group col-md-4">
+                        <label for="{{ form.last_name.id_for_label }}">Отчество:</label>
+                        <input class="form-control" type="text" name="fathers_name" value="{{ user.fathers_name }}" maxlength="255" required=""
+                               id="id_fathers_name">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="{{ form.email.id_for_label }}">Электронная
+                        почта:</label>
+                    <input class="form-control" type="email" name="email" value="{{ user.email }}" maxlength="254" id="id_email">
+                </div>
+                 <div class="form-row">
+
+                    <div class="form-group col-md-6">
+                        <label for="id_instagram_link">Ссылка на инстаграм:</label>
+                        <input type="url" class="form-control" name="instagram_link" value="{{ user.instagram_link }}" maxlength="200" id="id_instagram_link">
+                    </div>
+                    <div class="form-group col-md-6">
+                        <label for="id_vk_link">Ссылка на ВКонтакте:</label>
+                        <input type="url" class="form-control" name="vk_link" value="{{ user.vk_link }}" maxlength="200" id="id_vk_link">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label for="id_credit_card_number">Номер кредитной карты:</label>
+                    <input type="text" class="form-control" name="credit_card_number" value="{{ user.credit_card_number }}" maxlength="16" id="id_credit_card_number">
+                </div>
+                <div class="col-12 text-center">
+                    <button type="submit" class="themeBtn4" >Изменить</button>
+                </div>
+            </form>
+        </div>
+    </section>
+{% endblock %}

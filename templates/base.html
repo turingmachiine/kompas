@@ -1,0 +1,120 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no"/>
+    <title>{% block title %}{% endblock %}</title>
+    <!-- Favicon-->
+    <link rel="icon" type="image/x-icon" href="{% static "assets/img/favicon.ico" %}"/>
+    <!-- Font Awesome icons (free version)-->
+    <script src="https://use.fontawesome.com/releases/v5.13.0/js/all.js" crossorigin="anonymous"></script>
+    <!-- Google fonts-->
+    <link href="https://fonts.googleapis.com/css?family=Merriweather+Sans:400,700" rel="stylesheet"/>
+    <link href="https://fonts.googleapis.com/css?family=Merriweather:400,300,300italic,400italic,700,700italic"
+          rel="stylesheet" type="text/css"/>
+    <!-- Third party plugin CSS-->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/magnific-popup.min.css"
+          rel="stylesheet"/>
+    <!-- Core theme CSS (includes Bootstrap)-->
+    <link href="{% static "css/style.css" %}" rel="stylesheet"/>
+
+    {% block add_style %}
+
+    {% endblock %}
+</head>
+
+
+<body id="page-top">
+<!-- Navigation-->
+<nav class="navbar navbar-expand-lg navbar-light fixed-top py-3" id="mainNav">
+    <div class="container">
+        <a class="navbar-brand js-scroll-trigger" href="{% url 'root' %}#page-top">Компас</a>
+        <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse"
+                data-target="#navbarResponsive" aria-controls="navbarResponsive" aria-expanded="false"
+                aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
+        <div class="collapse navbar-collapse" id="navbarResponsive">
+            <ul class="navbar-nav ml-auto my-2 my-lg-0">
+                {% if request.path == '/' %}
+
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#save">Накопить</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#borrow">Занять</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger"
+                                            href="#earn">Заработать</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="#about">О
+                        проекте</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger"
+                                            href="#contact">Контакты</a></li>
+                {% else %}
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'root' %}#save">Накопить</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'root' %}#borrow">Занять</a>
+                    </li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger"
+                                            href="{% url 'root' %}#earn">Заработать</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger" href="{% url 'root' %}#about">О
+                        проекте</a></li>
+                    <li class="nav-item"><a class="nav-link js-scroll-trigger"
+                                            href="{% url 'root' %}#contact">Контакты</a></li>
+                {% endif %}
+            </ul>
+            <ul class="navbar-nav ml-5 mr-0 my-2 my-lg-0">
+                {% if request.user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            {{ request.user.first_name }}
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item nav-link js-scroll-trigger my-1" style="color: black"
+                               href="{% url 'profile' %}">Профиль</a>
+                            <a class="dropdown-item nav-link js-scroll-trigger my-1" style="color: black"
+                               href="{% url 'logout' %}">Выйти</a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item dropdown">
+
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                           data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            Аккаунт
+                        </a>
+                        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <a class="dropdown-item nav-link js-scroll-trigger" style="color: black"
+                               href="{% url 'register' %}">Создать</a>
+                            <a class="dropdown-item nav-link js-scroll-trigger" style="color: black"
+                               href="{% url 'login' %}">Войти</a>
+                        </div>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+    </div>
+</nav>
+{% block top_content %}
+    <header class="page-section bg-dark text-white mb-0">
+        <div class="container text-center" id="save">
+        </div>
+    </header>
+{% endblock %}
+<section class="page-section">
+{% block content %}{% endblock %}
+</section>
+    <!-- Footer-->
+<footer class="bg-light py-5">
+    <div class="container">
+        <div class="small text-center text-muted">Copyright © 2020 - baddieturing and some jura info</div>
+    </div>
+</footer>
+<!-- Bootstrap core JS-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.bundle.min.js"></script>
+<!-- Third party plugin JS-->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-easing/1.4.1/jquery.easing.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/magnific-popup.js/1.1.0/jquery.magnific-popup.min.js"></script>
+<!-- Core theme JS-->
+<script src="{% static "js/scripts.js" %}"></script>
+</body>
+</html>

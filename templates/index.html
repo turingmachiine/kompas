@@ -1,0 +1,213 @@
+{% extends "base.html" %}
+{% block title %}Компас{% endblock %}
+{% block top_content %}
+    {% load static %}
+    <!-- Save Money-->
+    <section>
+        <header class="page-section bg-dark text-white mb-0">
+            <div class="container text-center" id="save">
+                <h2 class="mb-4">А Вы пробовали скапливать деньги минимум 12 месяцев подряд и при этом ни разу их не
+                    тратить?
+                    Ежемесячно увеличивая сумму своих накоплений?</h2>
+                <hr class="divider my-4"/>
+                <section class="mt-5" id="mainBads">
+                    <h4 class="mb-5">Основные причины, почему это не так просто сделать, как кажется большинству из
+                        нас:</h4>
+                    <p class="text-white-50 mb-4">- Отсутствуют обязательства перед самим собой по договору. С собой
+                        договориться о
+                        пропуске взноса проще всего.</p>
+                    <p class="text-white-50 mb-4">- Откладываем слишком большую сумму денег относительно своей зарплаты,
+                        надеясь, что
+                        до
+                        следующей получки как-нибудь дотянем.</p>
+                    <p class="text-white-50 mb-4">- Имеется возможность использования накоплений раньше запланированного
+                        срока. Если
+                        хранятся в банке либо иных финансовых организациях, то по договору есть право досрочного снятия.
+                        Если
+                        хранятся дома, то и того проще.</p>
+                    <p class="text-white-50 mb-4">- Появляются соблазны удовлетворения своих потребностей.</p>
+
+
+                </section>
+            </div>
+        </header>
+        <section class="page-section" id="cooparative">
+            <div class="container mt-0">
+                <h2 class="text-center mt-0">Что предлагает наш кооператив?</h2>
+                <hr class="divider my-4"/>
+                <p class="text-black-50 mb-4">- Кооператив возьмет на себя обязательства по стимулированию
+                    поступления от Вас ежемесячных взносов на Ваш депозит, по напоминанию в случае пропуска
+                    очередного взноса.</p>
+                <p class="text-black-50 mb-4">- Совместно с Вами рассчитаем сумму денег для минимальных ежемесячных
+                    взносов, отсутствие которой не скажется негативно на удовлетворении привычных потребностей.</p>
+                <p class="text-black-50 mb-4">- Кооператив возьмет на себя обязательство по сохранению накоплений на
+                    протяжении 12 месяцев и не допущению участника кооператива к расходованию данными
+                    накоплениями.</p>
+            </div>
+        </section>
+        <section class="page-section bg-primary text-white">
+            <div class="container text-center" id="save">
+                <div class="row justify-content-center">
+                    <div class="text-center">
+                        <h2 class="text-white mt-0">Что Вы получаете по истечению 12 месяцев?</h2>
+                        <hr class="divider light my-4"/>
+                        <p class="text-white-50 mb-4">- Максимально возможную сумму накоплений, которая у Вас только
+                            могла
+                            скопиться за данный период.</p>
+                        <p class="text-white-50 mb-4">- Полезная финансовая привычка ежемесячно накапливать денежные
+                            средства.</p>
+                        <p class="text-white-50 mb-4">- Создание капитала, с помощью которого Вы сможете начать
+                            инвестировать в разного масштаба проекты.</p>
+                        <p class="text-white-50 mb-4">- Удовлетворение одной из бытовых потребностей, которую, возможно,
+                            Вы
+                            бы приобрели используя заемные средства переплатив проценты.</p>
+
+                    </div>
+                </div>
+            </div>
+            <div class="container text-center mt-5">
+                <h2 class="mb-4">Зарегистрируйтесь/авторизуйтесь в личном кабинете, следуйте указаниям!</h2>
+                <a class="btn btn-light btn-xl" href="{% url 'login' %}">Начать копить</a>
+            </div>
+        </section>
+    </section>
+    <!-- Borrow Money-->
+    <section class="page-section" id="borrow">
+        <div class="container">
+            <h2 class="text-center mt-0">Имеется необходимость решения срочных бытовых финансовых проблем, используйте
+                общие средства кооператива на льготных условиях до зарплаты</h2>
+            <hr class="divider my-4"/>
+            <div class="row">
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="mt-5">
+                        <h1 class="h1 mb-4 text-primary">20 000₽</h1>
+                        <h4 class="mb-0">Лимит займов</h4>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="mt-5">
+                        <h1 class="h1 text-primary mb-4">30</h1>
+                        <h4 class="mb-0">Дней</h4>
+                    </div>
+                </div>
+                <div class="col-lg-4 col-md-6 text-center">
+                    <div class="mt-5">
+                        <h1 class="h1 text-primary
+                    mb-4">200₽</h1>
+                        <h4 class="mb-1">Комиссия за пользование займа</h4>
+                        <p6 class="text-muted mb-0">Данный размер комиссии сравним со стоимостью хорошей шоколадки,
+                            которой Вы благодарите своего знакомого за то, что одолжил Вам денег!
+                        </p6>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Portfolio-->
+    <div id="portfolio">
+        <div class="container-fluid p-0">
+            <div class="row no-gutters">
+                <div class="col-lg-4 col-sm-6">
+                    <a class="portfolio-box" href="{% static "assets/img/portfolio/fullsize/1.jpg" %}">
+                        <img class="img-fluid" src="{% static "assets/img/portfolio/thumbnails/1.jpg" %}" alt=""/>
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">Category</div>
+                            <div class="project-name">Project Name</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <a class="portfolio-box" href="{% static "assets/img/portfolio/fullsize/2.jpg" %}">
+                        <img class="img-fluid" src="{% static "assets/img/portfolio/thumbnails/2.jpg" %}" alt=""/>
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">Category</div>
+                            <div class="project-name">Project Name</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <a class="portfolio-box" href="{% static "assets/img/portfolio/fullsize/3.jpg" %}">
+                        <img class="img-fluid" src="{% static "assets/img/portfolio/thumbnails/3.jpg" %}" alt=""/>
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">Category</div>
+                            <div class="project-name">Project Name</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <a class="portfolio-box" href="{% static "assets/img/portfolio/fullsize/4.jpg" %}">
+                        <img class="img-fluid" src="{% static "assets/img/portfolio/thumbnails/4.jpg" %}" alt=""/>
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">Category</div>
+                            <div class="project-name">Project Name</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <a class="portfolio-box" href="{% static "assets/img/portfolio/fullsize/5.jpg" %}">
+                        <img class="img-fluid" src="{% static "assets/img/portfolio/thumbnails/5.jpg" %}" alt=""/>
+                        <div class="portfolio-box-caption">
+                            <div class="project-category text-white-50">Category</div>
+                            <div class="project-name">Project Name</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="col-lg-4 col-sm-6">
+                    <a class="portfolio-box" href="{% static "assets/img/portfolio/fullsize/6.jpg" %}">
+                        <img class="img-fluid" src="{% static "assets/img/portfolio/thumbnails/6.jpg" %}" alt=""/>
+                        <div class="portfolio-box-caption p-3">
+                            <div class="project-category text-white-50">Category</div>
+                            <div class="project-name">Project Name</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Earn Money-->
+    <section class="page-section" id="earn">
+        <div class="container">
+            <h2 class="text-center mt-0">Ваши деньги могут приносить больше прибыли</h2>
+            <hr class="divider my-4"/>
+            <p class="text-center text-black-50 mb-4">Если будут задействованы в кооперативе. В Настоящий момент
+                основной вид заработка это инвестирование в выдачу займов участникам кооператива. Размер доходности,
+                риски, а также кредитную политику определяете Вы сами.</p>
+        </div>
+    </section>
+    <!-- About-->
+    <section class="page-section bg-primary" id="about">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="text-white mt-0">О нас</h2>
+                    <hr class="divider light my-4"/>
+                    <p class="text-white-50 mb-4">Потребительский кооператив «Компас» создан для удовлетворения
+                        потребностей граждан, для создания более выгодных финансовых предложений, нежели доступных на
+                        рынке. Наша миссия, улучшение финансового состояния людей, за счет предоставления более дешевых
+                        заемных средств, а также предоставления более выгодных ставок по инвестированию. При этом,
+                        создавая платформу с минимальными рисками!</p>
+                </div>
+            </div>
+        </div>
+    </section>
+    <!-- Contact-->
+    <section class="page-section" id="contact">
+        <div class="container">
+            <div class="row justify-content-center">
+                <div class="col-lg-8 text-center">
+                    <h2 class="mt-0">Копим деньги!</h2>
+                    <hr class="divider my-4"/>
+                    <p class="text-muted mb-5">Если у вас есть вопросы, вы можете найти нас ВКонтакте и в Инстраграм, а
+                        также написать на нашу почту</p>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-lg-4 mx-auto text-center">
+                    <i class="fas fa-envelope fa-3x mb-3 text-muted"></i>
+                    <!-- Make sure to change the email address in BOTH the anchor text and the link target below!-->
+                    <a class="d-block" href="mailto:info@compas.ru">info@compas.ru</a>
+                </div>
+            </div>
+        </div>
+    </section>
+{% endblock %}
