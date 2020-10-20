@@ -10,7 +10,7 @@ idna==2.10
 instagram-private-api==1.6.0
 numpy==1.19.2
 Pillow==7.2.0
-pkg-resources==0.0.0
+pkg-resources
 pytz==2020.1
 requests==2.24.0
 sqlparse==0.3.1
