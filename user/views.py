@@ -146,6 +146,7 @@ def make_source_distinct(outcome_debt):
 @login_required(login_url=reverse_lazy('login'))
 def profile_view(request):
     user = request.user
+    print(user.friends.exists())
     income_debt = MoneyLogs.objects.filter(source=user, borrower__isnull=False).values('sum', 'borrower__username',
                                                                                        'date')
     income_debt = make_borrower_distinct(income_debt)
@@ -160,51 +161,53 @@ def profile_view(request):
 @login_required(login_url=reverse_lazy('login'))
 def get_money(request):
     user = request.user
-    limit = functools.reduce(lambda x, y: x + y, user.friends.values_list("balance", flat=True))
-    if request.method == "POST":
-        form = MoneyForm(request.POST)
-        if form.is_valid():
-            money = form.cleaned_data["money"]
-            if money < limit:
-                amount = money
-                friends = user.friends.filter(balance__gt=0)
-                sums = dict()
-                for friend in friends:
-                    sums[friend.id] = 0
-                while abs(amount) > 1E-7:
+    if user.friends.exists():
+        limit = functools.reduce(lambda x, y: x + y, user.friends.values_list("balance", flat=True))
+        if request.method == "POST":
+            form = MoneyForm(request.POST)
+            if form.is_valid():
+                money = form.cleaned_data["money"]
+                if money < limit:
+                    amount = money
                     friends = user.friends.filter(balance__gt=0)
-                    count = friends.count()
-                    iter_contribution = amount / count
+                    sums = dict()
                     for friend in friends:
-                        if friend.balance >= iter_contribution:
-                            sums[friend.id] += iter_contribution
-                            friend.balance -= iter_contribution
-                            friend.save()
-                            amount -= iter_contribution
-                        else:
-                            sums[friend.id] += friend.balance
-                            amount -= friend.balance
-                            friend.balance = 0
-                            friend.save()
-                user.balance += money
-                user.save()
-                for key in sums.keys():
-                    MoneyLogs.objects.create(source_id=key, borrower=user, sum=sums[key], operation="LOAN")
-                return redirect("profile")
-            elif money == limit:
-                for friend in user.friends:
-                    MoneyLogs.objects.create(borrower=user, source=friend, sum=friend.balance, operation="LOAN")
-                    friend.balance = 0
-                    friend.save()
-                user.balance += limit
-                user.save()
-                return redirect("profile")
-            else:
-                return render(request, "get_money.html", {"user": user, "limit": limit, "form": MoneyForm()})
+                        sums[friend.id] = 0
+                    while abs(amount) > 1E-7:
+                        friends = user.friends.filter(balance__gt=0)
+                        count = friends.count()
+                        iter_contribution = amount / count
+                        for friend in friends:
+                            if friend.balance >= iter_contribution:
+                                sums[friend.id] += iter_contribution
+                                friend.balance -= iter_contribution
+                                friend.save()
+                                amount -= iter_contribution
+                            else:
+                                sums[friend.id] += friend.balance
+                                amount -= friend.balance
+                                friend.balance = 0
+                                friend.save()
+                    user.balance += money
+                    user.save()
+                    for key in sums.keys():
+                        MoneyLogs.objects.create(source_id=key, borrower=user, sum=sums[key], operation="LOAN")
+                    return redirect("profile")
+                elif money == limit:
+                    for friend in user.friends:
+                        MoneyLogs.objects.create(borrower=user, source=friend, sum=friend.balance, operation="LOAN")
+                        friend.balance = 0
+                        friend.save()
+                    user.balance += limit
+                    user.save()
+                    return redirect("profile")
+                else:
+                    return render(request, "get_money.html", {"user": user, "limit": limit, "form": MoneyForm()})
 
+        else:
+            return render(request, "get_money.html", {"user": user, "limit": limit, "form": MoneyForm()})
     else:
-        return render(request, "get_money.html", {"user": user, "limit": limit, "form": MoneyForm()})
-
+        return redirect("profile")
 
 @login_required(login_url=reverse_lazy('login'))
 def edit_data(request):

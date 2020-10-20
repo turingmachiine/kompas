@@ -137,7 +137,7 @@
                         </div>
                         <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
                             <div class="container-fluid">
-                                <a href="{% url 'get_money' %}" class="themeBtn4">Занять деньги</a>
+                                <a href={% if user.friends.exists  %}{% url 'get_money' %}{% else %}#{% endif %} class="themeBtn4" disabled=>Занять деньги</a>
                             </div>
                         </div>
                         <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
