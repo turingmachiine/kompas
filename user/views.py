@@ -143,7 +143,6 @@ def make_source_distinct(outcome_debt):
     return result
 
 
-
 @login_required(login_url=reverse_lazy('login'))
 def profile_view(request):
     user = request.user
@@ -218,7 +217,8 @@ def edit_data(request):
             user.fathers_name = form.cleaned_data["fathers_name"]
             user.credit_card_number = form.cleaned_data["credit_card_number"]
             if user.vk_link != form.cleaned_data["vk_link"]:
-                if form.cleaned_data["vk_link"] is not None:
+                if form.cleaned_data["vk_link"] is not None and form.cleaned_data["vk_link"].find(
+                        "vk.com") != -1:
                     config = ConfigAPI()
                     config.init()
                     query = form.cleaned_data["vk_link"].split("/")[3]
@@ -233,8 +233,11 @@ def edit_data(request):
                             follow = Follow.objects.get_or_create(follower=friend_model, follow_user=user)
                 user.vk_link = form.cleaned_data["vk_link"]
             if user.instagram_link != form.cleaned_data["instagram_link"]:
-                init = InstagramInitializer()
-                friends = init.get_friends(form.cleaned_data["instagram_link"].split("/")[3])
+                if form.cleaned_data["instagram_link"] is not None and form.cleaned_data["instagram_link"].find(
+                        "instagram.com") != -1:
+                    # init = InstagramInitializer()
+                    # friends = init.get_friends(form.cleaned_data["instagram_link"].split("/")[3])
+                    pass
                 user.instagram_link = form.cleaned_data["instagram_link"]
 
             user.email = form.cleaned_data["email"]
