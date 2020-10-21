@@ -3,23 +3,22 @@
 {% block profile_content %}
     <section class="page-section" id="borrow">
         <div class="container">
-            <h2 class="text-center mt-0">Занять деньги</h2>
+            <h2 class="text-center mt-0">Вывести деньги</h2>
             <hr class="divider my-4"/>
-            <form id="money-form" name="money-form" action="{% url 'get_money' %}" method="post"
+            <form id="money-form" name="money-form" action="{% url 'top_down' %}" method="post"
                   enctype="multipart/form-data">
                 {% csrf_token %}
                 <div class="form-group">
                     <label for="id_money">Введите сумму:</label>
                     <input type="range" class="custom-range" name="money-range" style="color: black" min="0"
-                           max="{{ limit }}" step="1"
+                           max="{{ user.balance }}" step="1"
                            onchange="updateTextInput(this.value);" oninput="updateTextInput(this.value)"
-                           value="{{ limit }}" id="id-money-range">
+                           value="{{ user.balance }}" id="id-money-range">
                     <input type="number" id="id_money" min="0"
-                           max="{{ limit }}" name="money" onchange="updateRangeInput(this.value)" oninput="updateRangeInput(this.value)" required=""
-                           value="{{ limit }}">
+                           max="{{ user.balance }}"name="money" required="" onchange="updateRangeInput(this.value)" oninput="updateRangeInput(this.value)" value="{{ user.balance }}">
                 </div>
                 <div class="col-12 text-center">
-                    <button type="submit" class="themeBtn4">Занять</button>
+                    <button type="submit" class="themeBtn4">Вывести</button>
                 </div>
             </form>
         </div>

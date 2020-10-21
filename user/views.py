@@ -161,7 +161,7 @@ def profile_view(request):
 @login_required(login_url=reverse_lazy('login'))
 def get_money(request):
     user = request.user
-    if user.friends.exists():
+    if user.friends.exists() and user.passport is not None:
         limit = functools.reduce(lambda x, y: x + y, user.friends.values_list("balance", flat=True))
         if request.method == "POST":
             form = MoneyForm(request.POST)
@@ -209,6 +209,7 @@ def get_money(request):
     else:
         return redirect("profile")
 
+
 @login_required(login_url=reverse_lazy('login'))
 def edit_data(request):
     if request.method == 'POST':
@@ -255,11 +256,34 @@ def edit_data(request):
 
 @login_required(login_url=reverse_lazy('login'))
 def top_up(request):
-    user = request.user
-    user.balance += 1000
-    user.save()
-    MoneyLogs.objects.create(borrower=user, sum=1000, operation="REPLENISHMENT")
-    return redirect(reverse('profile'))
+    if request.method == 'POST':
+        form = MoneyForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            user.balance += int(form.cleaned_data['money'])
+            user.save()
+            MoneyLogs.objects.create(borrower=user, sum=int(form.cleaned_data['money']), operation="REPLENISHMENT")
+            return redirect(reverse('profile'))
+        else:
+            return render(request, "add_money.html", {"user": request.user})
+    else:
+        return render(request, "add_money.html", {"user": request.user})
+
+
+@login_required(login_url=reverse_lazy('login'))
+def top_down(request):
+    if request.method == 'POST':
+        form = MoneyForm(request.POST)
+        if form.is_valid():
+            user = request.user
+            user.balance -= int(form.cleaned_data['money'])
+            user.save()
+            MoneyLogs.objects.create(borrower=user, sum=int(form.cleaned_data['money']), operation="WITHDRAWAL")
+            return redirect(reverse('profile'))
+        else:
+            return render(request, "remove_money.html", {"user": request.user})
+    else:
+        return render(request, "remove_money.html", {"user": request.user})
 
 
 @login_required(login_url=reverse_lazy('login'))
@@ -273,6 +297,9 @@ def passport(request):
             request.user.passport = passport
             request.user.save()
             return redirect("profile")
+        else:
+            user = request.user
+            return render(request, "passport.html", {"user": user, "form": PassportForm()})
     else:
         user = request.user
         return render(request, "passport.html", {"user": user, "form": PassportForm()})

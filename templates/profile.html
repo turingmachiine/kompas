@@ -7,12 +7,13 @@
     <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
     <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.1.1/js/bootstrap.min.js"></script>
     <link rel='stylesheet prefetch' href='https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css'>
+    <link href="{% static "css/style.css" %}" rel="stylesheet"/>
     <link href="{% static "css/profile.css" %}" rel="stylesheet"/>
     <style>
-    .page-section {
-        padding: 8rem 0;
-        padding-top: 2rem;
-    }
+        .page-section {
+            padding: 8rem 0;
+            padding-top: 2rem;
+        }
     </style>
 {% endblock %}
 
@@ -105,7 +106,8 @@
                             {% endfor %}
                         </ul>
 
-                    </div>{% comment %}
+                    </div>
+                    {% comment %}
                     <div class="col-sm-10 col-md-10 mt-2 mb-5">
                         <ul class="col-sm-10 col-md-5 mt-2">
                             <h2>Вам должны</h2>
@@ -129,24 +131,34 @@
                             {% endfor %}
                         </ul>
                     </div>{% endcomment %}
-                    <div class="col-sm-12 pl-0 pr-0 pt-2">
-                        <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
-                            <div class="container-fluid">
-                                <a href="{% url 'top_up' %}" class="themeBtn4">Пополнить баланс</a>
-                            </div>
-                        </div>
-                        <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
-                            <div class="container-fluid">
-                                <a href={% if user.friends.exists  %}{% url 'get_money' %}{% else %}#{% endif %} class="themeBtn4" disabled=>Занять деньги</a>
-                            </div>
-                        </div>
-                        <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
-                            <div class="container-fluid">
-                                <a href="{}" class="themeBtn4">Вывести деньги</a>
-                            </div>
-                        </div>
 
-                    </div>
+                    {% if user.passport is not None %}
+                        <div class="col-sm-12 pl-0 pr-0 pt-2">
+                            <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
+                                <div class="container-fluid">
+                                    <a href="{% url 'top_up' %}" class="themeBtn4">Пополнить баланс</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
+                                <div class="container-fluid">
+                                    <a href={% if user.friends.exists %}{% url 'get_money' %}{% else %}#{% endif %}
+                                       class="themeBtn4" disabled=>Занять деньги</a>
+                                </div>
+                            </div>
+                            <div class="col-xs-4 col-sm-4 col-md-4 mt-2">
+                                <div class="container-fluid">
+                                    <a href="{% url 'top_down' %}" class="themeBtn4">Вывести деньги</a>
+                                </div>
+                            </div>
+
+                        </div>
+                    {% else %}
+                        <div class="col-sm-10 col-md-10 mt-2 mb-5">
+
+                            <h1 class="text-center mb-2">Для того чтобы воспользоваться сервисом введите паспортные
+                                данные</h1>
+                        </div>
+                    {% endif %}
                 </div>
 
 

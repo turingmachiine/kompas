@@ -19,13 +19,14 @@ from django.contrib import admin
 from django.urls import path, include
 
 from info.views import index
-from user.views import profile_view, top_up, edit_data, passport, get_money
+from user.views import profile_view, top_up, edit_data, passport, get_money, top_down
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('profile/', profile_view, name='profile'),
     path('profile/edit', edit_data, name='edit'),
     path('profile/top_up/', top_up, name='top_up'),
+    path('profile/top_down/', top_down, name='top_down'),
     path('profile/add_passport', passport, name='passport'),
     path('auth/', include('user.urls')),
     path('profile/get', get_money, name='get_money'),
