@@ -122,12 +122,12 @@ def reset(request, code):
 def make_borrower_distinct(income_debt):
     result = dict()
     for item in income_debt:
-        if not item['borrower__username'] in result.keys():
-            result[item['borrower__username']] = dict()
-        if not item['date'] in result[item['borrower__username']].keys():
-            result[item['borrower__username']][item['date']] = item['sum']
+        if not item['destination__username'] in result.keys():
+            result[item['destination__username']] = dict()
+        if not item['date'] in result[item['destination__username']].keys():
+            result[item['destination__username']][item['date']] = item['sum']
         else:
-            result[item['borrower__username']][item['date']] += item['sum']
+            result[item['destination__username']][item['date']] += item['sum']
     return result
 
 
@@ -147,10 +147,10 @@ def make_source_distinct(outcome_debt):
 def profile_view(request):
     user = request.user
     print(user.friends.exists())
-    income_debt = MoneyLogs.objects.filter(source=user, borrower__isnull=False).values('sum', 'borrower__username',
+    income_debt = MoneyLogs.objects.filter(source=user, destination__isnull=False).exclude(operation="WITHDRAWAL").values('sum', 'destination__username',
                                                                                        'date')
     income_debt = make_borrower_distinct(income_debt)
-    outcome_debt = MoneyLogs.objects.filter(borrower=user, source__isnull=False).values('sum', 'source__username',
+    outcome_debt = MoneyLogs.objects.filter(destination=user, source__isnull=False).exclude(operation="WITHDRAWAL").values('sum', 'source__username',
                                                                                         'date')
     outcome_debt = make_source_distinct(outcome_debt)
     print(income_debt)
@@ -191,11 +191,13 @@ def get_money(request):
                     user.balance += money
                     user.save()
                     for key in sums.keys():
-                        MoneyLogs.objects.create(source_id=key, borrower=user, sum=sums[key], operation="LOAN")
+                        MoneyLogs.objects.create(source_id=key, destination=user, sum=sums[key], operation="LOAN")
+                    MoneyLogs.objects.create(destination=user, sum=200, operation="COMMISSION")
                     return redirect("profile")
                 elif money == limit:
                     for friend in user.friends:
-                        MoneyLogs.objects.create(borrower=user, source=friend, sum=friend.balance, operation="LOAN")
+                        MoneyLogs.objects.create(destination=user, source=friend, sum=friend.balance, operation="LOAN")
+                        MoneyLogs.objects.create(destination=user, sum=200, operation="COMMISSION")
                         friend.balance = 0
                         friend.save()
                     user.balance += limit
@@ -262,7 +264,7 @@ def top_up(request):
             user = request.user
             user.balance += int(form.cleaned_data['money'])
             user.save()
-            MoneyLogs.objects.create(borrower=user, sum=int(form.cleaned_data['money']), operation="REPLENISHMENT")
+            MoneyLogs.objects.create(destination=user, sum=int(form.cleaned_data['money']), operation="REPLENISHMENT")
             return redirect(reverse('profile'))
         else:
             return render(request, "add_money.html", {"user": request.user})
@@ -278,7 +280,7 @@ def top_down(request):
             user = request.user
             user.balance -= int(form.cleaned_data['money'])
             user.save()
-            MoneyLogs.objects.create(borrower=user, sum=int(form.cleaned_data['money']), operation="WITHDRAWAL")
+            MoneyLogs.objects.create(destination=user, sum=int(form.cleaned_data['money']), operation="WITHDRAWAL")
             return redirect(reverse('profile'))
         else:
             return render(request, "remove_money.html", {"user": request.user})
