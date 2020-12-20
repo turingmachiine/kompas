@@ -146,16 +146,16 @@ def make_source_distinct(outcome_debt):
 @login_required(login_url=reverse_lazy('login'))
 def profile_view(request):
     user = request.user
-    print(user.friends.exists())
-    income_debt = MoneyLogs.objects.filter(source=user, destination__isnull=False).exclude(operation="WITHDRAWAL").values('sum', 'destination__username',
-                                                                                       'date')
-    income_debt = make_borrower_distinct(income_debt)
-    outcome_debt = MoneyLogs.objects.filter(destination=user, source__isnull=False).exclude(operation="WITHDRAWAL").values('sum', 'source__username',
-                                                                                        'date')
-    outcome_debt = make_source_distinct(outcome_debt)
-    print(income_debt)
-    print(outcome_debt)
-    return render(request, "profile.html", {"user": user, "income_debt": income_debt, "outcome_debt": outcome_debt})
+    # print(user.friends.exists())
+    # income_debt = MoneyLogs.objects.filter(source=user, destination__isnull=False).exclude(operation="WITHDRAWAL").values('sum', 'destination__username',
+    #                                                                                    'date')
+    # income_debt = make_borrower_distinct(income_debt)
+    # outcome_debt = MoneyLogs.objects.filter(destination=user, source__isnull=False).exclude(operation="WITHDRAWAL").values('sum', 'source__username',
+    #                                                                                     'date')
+    # outcome_debt = make_source_distinct(outcome_debt)
+    # print(income_debt)
+    # print(outcome_debt)
+    return render(request, "profile.html", {"user": user})
 
 
 @login_required(login_url=reverse_lazy('login'))
