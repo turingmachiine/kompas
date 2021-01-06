@@ -50,6 +50,11 @@ class EditForm(forms.ModelForm):
 
 
 class PassportForm(forms.ModelForm):
+
+    def __init__(self, *args, **kwargs):
+        super(PassportForm, self).__init__(*args, **kwargs)
+        self.fields['when'].input_formats = ['%d-%m-%Y', '%d/%m/%Y', '%d.%m.%Y']
+
     class Meta:
         model = Passport
         exclude = {}

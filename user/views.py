@@ -223,20 +223,20 @@ def edit_data(request):
             user.fathers_name = form.cleaned_data["fathers_name"]
             user.credit_card_number = form.cleaned_data["credit_card_number"]
             if user.vk_link != form.cleaned_data["vk_link"]:
-                if form.cleaned_data["vk_link"] is not None and form.cleaned_data["vk_link"].find(
-                        "vk.com") != -1:
-                    config = ConfigAPI()
-                    config.init()
-                    query = form.cleaned_data["vk_link"].split("/")[3]
-                    vk_user = config.api.users.get(user_ids=query, fields="id")
-                    user_id = vk_user[0]["id"]
-                    friends = config.api.friends.get(user_id=user_id, fields="id, domain")
-                    for friend in friends["items"]:
-                        friend_model = User.objects.filter(
-                            vk_link__contains="vk.com/{}".format(friend["domain"])).first()
-                        if friend_model is not None:
-                            follow = Follow.objects.get_or_create(follower=user, follow_user=friend_model)
-                            follow = Follow.objects.get_or_create(follower=friend_model, follow_user=user)
+                # if form.cleaned_data["vk_link"] is not None and form.cleaned_data["vk_link"].find(
+                #         "vk.com") != -1:
+                #     config = ConfigAPI()
+                #     config.init()
+                #     query = form.cleaned_data["vk_link"].split("/")[3]
+                #     vk_user = config.api.users.get(user_ids=query, fields="id")
+                #     user_id = vk_user[0]["id"]
+                #     friends = config.api.friends.get(user_id=user_id, fields="id, domain")
+                #     for friend in friends["items"]:
+                #         friend_model = User.objects.filter(
+                #             vk_link__contains="vk.com/{}".format(friend["domain"])).first()
+                #         if friend_model is not None:
+                #             follow = Follow.objects.get_or_create(follower=user, follow_user=friend_model)
+                #             follow = Follow.objects.get_or_create(follower=friend_model, follow_user=user)
                 user.vk_link = form.cleaned_data["vk_link"]
             if user.instagram_link != form.cleaned_data["instagram_link"]:
                 if form.cleaned_data["instagram_link"] is not None and form.cleaned_data["instagram_link"].find(
@@ -300,6 +300,7 @@ def passport(request):
             request.user.save()
             return redirect("profile")
         else:
+            errors = form.errors
             user = request.user
             return render(request, "passport.html", {"user": user, "form": PassportForm()})
     else:
