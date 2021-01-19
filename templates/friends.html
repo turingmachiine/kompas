@@ -1,0 +1,111 @@
+{% extends 'profile.html' %}
+{% block profile_content %}
+    <section class="page-section" id="friends">
+        <h2 class="text-center">Поиск друзей</h2>
+        <div class="text-black-50 text-center">Вам предложены друзья на основании вашего ВКонтакте, но вы можете найти
+            нужного вам пользователя через строку поиска
+        </div>
+        <hr>
+        <form class="form" action="{% url 'friends' %}" method="get">
+            <input class="form-control mr-sm-2 col-md-10 col-lg-10 col-sm-10 col-xs-10" type="search" name="query"
+                   value="{{ request.GET.query }}" aria-label="Search">
+            <button class="themeBtn4" type="submit">Найти</button>
+        </form>
+        <hr>
+        <div class="container">
+            {% for u in users %}
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="row mt-3 mb-4">
+                            <div class="col-md-2 col-xs-2 col-sm-2 col-lg-2">
+                                <img alt="User Pic"
+                                     src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg"
+                                     id="profile-image1" class="img-circle img-fluid">
+                            </div>
+                            <div class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
+
+                                <div class="container">
+                                    <h4>{{ u.last_name }} {{ u.first_name }} {{ u.fathers_name }}</h4>
+                                    <p>на счете <b>{{ u.balance }}</b> рублей</p>
+
+                                    <ul class="container details">
+
+                                        <li><p><span class="glyphicon glyphicon-envelope one"
+                                                     style="width:50px;"></span>{{ u.email }}
+                                        </p></li>
+                                        <li><p><span class="glyphicon glyphicon-user one"
+                                                     style="width:50px;"></span> {{ u.vk_link }}
+                                        </p></li>
+                                    </ul>
+                                </div>
+
+                                <div class="container-fluid">
+                                    {% if u in user.follows %}
+                                        <a href="{% url 'delete_friend' u.id %}"
+                                           class="themeBtn4">Перестать доверять</a>
+
+                                    {% else %}
+                                        <a href="{% url 'add_friend' u.id %}"
+                                           class="themeBtn4">Доверить деньги</a>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+
+            {% if request.GET.query %}
+                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                   href="{% url 'friends' %}?query={{ request.GET.query }}&page=1">Первая страница</a>
+            {% else %}
+                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                   href="{% url 'friends' %}?page=1">Первая страница</a>
+            {% endif %}
+            {% if hasPrevPage %}
+                {% if request.GET.query %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ prev_page }}">Предыдущая
+                        страница</a>
+                {% else %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="{% url 'friends' %}?page={{ prev_page }}">Предыдущая страница</a>
+                {% endif %}
+            {% else %}
+                {% if request.GET.query %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="">Предыдущая страница</a>
+                {% else %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="">Предыдущая страница</a>
+                {% endif %}
+            {% endif %}
+            {% if hasNextPage %}
+                {% if request.GET.query %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ next_page }}">Следующая
+                        Страница</a>
+                {% else %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="{% url 'friends' %}?page={{ next_page }}">Следующая страница</a>
+                {% endif %}
+            {% else %}
+                {% if request.GET.query %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="">Следующая Страница</a>
+                {% else %}
+                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                       href="">Следующая страница</a>
+                {% endif %}
+            {% endif %}
+
+            {% if request.GET.query %}
+                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                   href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ num_pages }}">Последняя страница</a>
+            {% else %}
+                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
+                   href="{% url 'friends' %}?page={{ num_pages }}">Последняя страница</a>
+            {% endif %}
+        </div>
+    </section>
+{% endblock %}

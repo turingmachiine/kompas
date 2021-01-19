@@ -6,7 +6,8 @@ import uuid
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
-from django.db.models import Count
+from django.core.paginator import Paginator
+from django.db.models import Count, Q
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -155,26 +156,30 @@ def profile_view(request):
     # outcome_debt = make_source_distinct(outcome_debt)
     # print(income_debt)
     # print(outcome_debt)
-    return render(request, "profile.html", {"user": user})
+    # print(user.borrowers)
+    # print(user.follows)
+    # for i, item in enumerate(user.follows):
+    #     print("{} {}".format(i, item))
+    return render(request, "profile.html", {"user": user, "follows": enumerate(user.follows), "borrowers": enumerate(user.borrowers)})
 
 
 @login_required(login_url=reverse_lazy('login'))
 def get_money(request):
     user = request.user
-    if user.friends.exists() and user.passport is not None:
-        limit = functools.reduce(lambda x, y: x + y, user.friends.values_list("balance", flat=True))
+    if user.borrower.exists() and user.passport is not None:
+        limit = functools.reduce(lambda x, y: x + y, user.borrowers.values_list("balance", flat=True))
         if request.method == "POST":
             form = MoneyForm(request.POST)
             if form.is_valid():
                 money = form.cleaned_data["money"]
                 if money < limit:
                     amount = money
-                    friends = user.friends.filter(balance__gt=0)
+                    friends = user.borrowers.filter(balance__gt=0)
                     sums = dict()
                     for friend in friends:
                         sums[friend.id] = 0
                     while abs(amount) > 1E-7:
-                        friends = user.friends.filter(balance__gt=0)
+                        friends = user.borrowers.filter(balance__gt=0)
                         count = friends.count()
                         iter_contribution = amount / count
                         for friend in friends:
@@ -195,7 +200,7 @@ def get_money(request):
                     MoneyLogs.objects.create(destination=user, sum=200, operation="COMMISSION")
                     return redirect("profile")
                 elif money == limit:
-                    for friend in user.friends:
+                    for friend in user.borrower:
                         MoneyLogs.objects.create(destination=user, source=friend, sum=friend.balance, operation="LOAN")
                         MoneyLogs.objects.create(destination=user, sum=200, operation="COMMISSION")
                         friend.balance = 0
@@ -306,3 +311,50 @@ def passport(request):
     else:
         user = request.user
         return render(request, "passport.html", {"user": user, "form": PassportForm()})
+
+
+@login_required(login_url=reverse_lazy('login'))
+def find_friends(request):
+    if request.method == 'GET':
+        name = request.GET.get("query")
+        print(name)
+        user = request.user
+        if name is not None and name != '':
+            users = User.objects.filter(~Q(id=user.id) & (Q(first_name__contains=name) | Q(last_name__contains=name)
+                                        | Q(fathers_name__contains=name) | Q(username__contains=name)))
+        else:
+            users = []
+            config = ConfigAPI()
+            config.init()
+            query = user.vk_link.split("/")[3]
+            vk_user = config.api.users.get(user_ids=query, fields="id")
+            user_id = vk_user[0]["id"]
+            friends = config.api.friends.get(user_id=user_id, fields="id, domain")
+            for friend in friends["items"]:
+                friend_model = User.objects.filter(
+                    vk_link__contains="vk.com/{}".format(friend["domain"])).first()
+                if friend_model is not None:
+                    users.append(friend_model)
+    p = Paginator(users, 2)
+    if request.GET.get("page") is not None:
+        page = request.GET.get("page")
+    else:
+        page = 1
+
+    return render(request, "friends.html", {"user": user, "users": p.page(page).object_list,
+                                            "page": page, "next_page": int(page) + 1, "prev_page": int(page) - 1,
+                                            "hasNextPage": p.page(page).has_next(),
+                                            "hasPrevPage": p.page(page).has_previous(),
+                                            "num_pages": p.num_pages})
+
+
+@login_required(login_url=reverse_lazy('login'))
+def add_friend(request, id):
+    Follow.objects.create(follower_id=request.user.id, follow_user_id=id)
+    return redirect(reverse("friends"))
+
+
+@login_required(login_url=reverse_lazy('login'))
+def delete_friend(request, id):
+    Follow.objects.filter(follower_id=request.user.id, follow_user_id=id).first().delete()
+    return redirect(reverse("friends"))

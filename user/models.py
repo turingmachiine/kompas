@@ -41,17 +41,26 @@ class User(AbstractUser):
     instagram_link = models.URLField(null=True, blank=True, default='')
 
     @property
-    def followers(self):
+    def follower_items(self):
         return Follow.objects.filter(follow_user=self)
 
     @property
-    def follows(self):
+    def follow_items(self):
         return Follow.objects.filter(follower=self)
 
     @property
-    def friends(self):
+    def borrowers(self):
+        return User.objects.filter(id__in=(self.follower_items.values_list("follower")))
+
+    @property
+    def follows(self):
         return User.objects.filter(
-            id__in=(self.followers.values_list("follower") and self.follows.values_list("follow_user")))
+            id__in=(self.follow_items.values_list("follow_user")))
+
+    # @property
+    # def friends(self):
+    #     return User.objects.filter(
+    #         id__in=(self.followers.values_list("follower") and self.follows.values_list("follow_user")))
 
     class Meta:
         db_table = 'site_user'
