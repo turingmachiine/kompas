@@ -4,6 +4,7 @@ from django.contrib import admin
 
 # Register your models here.
 from django.contrib.admin import ModelAdmin, SimpleListFilter
+from django.db.models import Q
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from user.models import User, Passport, Follow, MoneyLogs
@@ -20,10 +21,28 @@ class FollowAdmin(ModelAdmin):
     list_filter = ['follower', 'follow_user']
 
 
+class PassportListFilter(SimpleListFilter):
+
+    title = _("passport")
+    parameter_name = 'passport'
+
+    def lookups(self, request, model_admin):
+        return [('yes', 'yes'), ('no', 'no')]
+
+    def queryset(self, request, queryset):
+        if self.value() == 'yes':
+            return queryset.filter(passport__isnull=False)
+        elif self.value() == 'no':
+            return queryset.filter(passport__isnull=True)
+        else:
+            return queryset.all()
+
+
+
 @admin.register(User)
 class UserAdmin(ModelAdmin):
-    list_display = ['username', 'first_name', 'last_name', 'fathers_name', 'email', 'balance', 'credit_card_number', 'is_confirmed']
-    list_filter = ['is_confirmed']
+    list_display = ['username', 'first_name', 'last_name', 'fathers_name', 'email', 'balance', 'credit_card_number', 'has_passport', 'is_confirmed']
+    list_filter = ['is_confirmed', PassportListFilter]
     actions = [return_money]
     ordering = ['username', 'last_name', 'first_name', 'fathers_name', 'balance']
 
@@ -79,7 +98,9 @@ class LoanReturnFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'yes':
-            return queryset.filter(date__contains=datetime.date(datetime.now() - timedelta(days=30)))
+            return queryset.filter(Q(date__contains=datetime.date(datetime.now() - timedelta(days=30))) & Q(is_active=True))
+        elif self.value() == 'no':
+            return queryset.exclude(Q(date__contains=datetime.date(datetime.now() - timedelta(days=30))) & Q(is_active=True))
         else:
             return queryset.all()
 

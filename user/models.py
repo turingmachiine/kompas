@@ -63,6 +63,12 @@ class User(AbstractUser):
     def has_current_debts(self):
         return len(MoneyLogs.objects.filter(destination=self, is_active=True)) > 0
 
+    def has_passport(self):
+        if self.passport:
+            return True
+        else:
+            return False
+
     def return_debt(self):
         if self.can_pay_debt:
             transactions = MoneyLogs.objects.filter(destination=self, is_active=True)
