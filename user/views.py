@@ -207,10 +207,10 @@ def get_money(request):
                     user.save()
                     return redirect("profile")
                 else:
-                    return render(request, "get_money.html", {"user": user, "limit": limit, "form": MoneyForm()})
+                    return render(request, "get_money.html", {"user": user, "limit": limit, "borrowers": enumerate(user.borrowers), "form": MoneyForm()})
 
         else:
-            return render(request, "get_money.html", {"user": user, "limit": limit, "form": MoneyForm()})
+            return render(request, "get_money.html", {"user": user, "limit": limit, "borrowers": enumerate(user.borrowers), "form": MoneyForm()})
     else:
         return redirect("profile")
 

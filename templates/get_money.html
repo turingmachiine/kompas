@@ -3,6 +3,75 @@
 {% block profile_content %}
     <section class="page-section" id="borrow">
         <div class="container">
+            <div class="mt-5 text-center container">
+                        <div class="row mb-2">
+                            <div class="col text-center">
+                                <h1 class="text-primary">Вам доверяют</h1>
+                                <p class="lead">Люди,у которых вы можете занять деньги</p>
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-center">
+                            <div class="col-1 d-flex align-items-center justify-content-center">
+                                <a href="#carouselBorrower" role="button" data-slide="prev">
+                                    <div class="carousel-nav-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129"
+                                             xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <path d="m88.6,121.3c0.8,0.8 1.8,1.2 2.9,1.2s2.1-0.4 2.9-1.2c1.6-1.6 1.6-4.2 0-5.8l-51-51 51-51c1.6-1.6 1.6-4.2 0-5.8s-4.2-1.6-5.8,0l-54,53.9c-1.6,1.6-1.6,4.2 0,5.8l54,53.9z"/>
+                                        </svg>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-10">
+                                <!--Start carousel-->
+                                <div id="carouselBorrower" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">
+                                        {% for i, u in borrowers %}
+                                            {% if i == 0 %}
+                                                <div class="carousel-item active">
+                                            {% else %}
+                                                <div class="carousel-item">
+                                            {% endif %}
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="row mt-3 mb-4 mx-2 mx-lg-2 mx-md-2 mx-sm-2 mx-xs-2">
+                                                        <div class="col-md-2 col-xs-2 col-sm-2 col-lg-2">
+                                                            <img alt="User Pic"
+                                                                 src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg"
+                                                                 id="profile-image1"
+                                                                 class="img-circle img-fluid">
+                                                        </div>
+                                                        <div class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
+
+                                                            <div class="container">
+                                                                <h4>{{ u.last_name }} {{ u.first_name }} {{ u.fathers_name }}</h4>
+                                                                <p>на счете <b>{{ u.balance }}</b> рублей
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-1 d-flex align-items-center justify-content-center">
+                                    <a href="#carouselBorrower" data-slide="next">
+                                        <div class="carousel-nav-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129"
+                                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                <path d="m40.4,121.3c-0.8,0.8-1.8,1.2-2.9,1.2s-2.1-0.4-2.9-1.2c-1.6-1.6-1.6-4.2 0-5.8l51-51-51-51c-1.6-1.6-1.6-4.2 0-5.81.6-1.6 4.2-1.6 5.8,0l53.9,53.9c1.6,1.6 1.6,4.2 0,5.8l-53.9,53.9z"/>
+                                            </svg>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
             <h2 class="text-center mt-0">Занять деньги</h2>
             <hr class="divider my-4"/>
             <form id="money-form" name="money-form" action="{% url 'get_money' %}" method="post"
