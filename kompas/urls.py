@@ -20,7 +20,7 @@ from django.urls import path, include
 
 from info.views import index
 from user.views import profile_view, top_up, edit_data, passport, get_money, top_down, find_friends, add_friend, \
-    delete_friend
+    delete_friend, return_debt
 
 urlpatterns = [
     path('admin/', admin.site.urls),
@@ -31,9 +31,10 @@ urlpatterns = [
     path('profile/top_down/', top_down, name='top_down'),
     path('profile/add_passport', passport, name='passport'),
     path('auth/', include('user.urls')),
-    path('profile/get', get_money, name='get_money'),
+    path('profile/get_money', get_money, name='get_money'),
     path('', index, name='root'),
     path('add_friend/<int:id>/', add_friend, name='add_friend'),
     path('delete_friend/<int:id>/', delete_friend, name='delete_friend'),
+    path('profile/return_money/', return_debt, name='return_money')
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
 

@@ -13,11 +13,10 @@ from django.shortcuts import render, redirect
 # Create your views here.
 from django.urls import reverse, reverse_lazy
 
-from info.models import MoneyLogs
 from social_api.ConfigAPI import ConfigAPI
 from social_api.InstagramInitializer import InstagramInitializer
 from user.forms import LoginForm, RegisterForm, ForgotForm, PasswordForm, VerifyForm, EditForm, PassportForm, MoneyForm
-from user.models import User, Passport, Follow
+from user.models import User, Passport, Follow, MoneyLogs
 
 
 def login_view(request):
@@ -160,13 +159,14 @@ def profile_view(request):
     # print(user.follows)
     # for i, item in enumerate(user.follows):
     #     print("{} {}".format(i, item))
-    return render(request, "profile.html", {"user": user, "follows": enumerate(user.follows), "borrowers": enumerate(user.borrowers)})
+    print(user.can_pay_debt)
+    return render(request, "profile.html", {"user": user})
 
 
 @login_required(login_url=reverse_lazy('login'))
 def get_money(request):
     user = request.user
-    if user.borrower.exists() and user.passport is not None:
+    if user.borrowers.exists() and user.is_confirmed and (not user.has_current_debts):
         limit = functools.reduce(lambda x, y: x + y, user.borrowers.values_list("balance", flat=True))
         if request.method == "POST":
             form = MoneyForm(request.POST)
@@ -197,12 +197,10 @@ def get_money(request):
                     user.save()
                     for key in sums.keys():
                         MoneyLogs.objects.create(source_id=key, destination=user, sum=sums[key], operation="LOAN")
-                    MoneyLogs.objects.create(destination=user, sum=200, operation="COMMISSION")
                     return redirect("profile")
                 elif money == limit:
                     for friend in user.borrower:
                         MoneyLogs.objects.create(destination=user, source=friend, sum=friend.balance, operation="LOAN")
-                        MoneyLogs.objects.create(destination=user, sum=200, operation="COMMISSION")
                         friend.balance = 0
                         friend.save()
                     user.balance += limit
@@ -317,25 +315,25 @@ def passport(request):
 def find_friends(request):
     if request.method == 'GET':
         name = request.GET.get("query")
-        print(name)
         user = request.user
         if name is not None and name != '':
             users = User.objects.filter(~Q(id=user.id) & (Q(first_name__contains=name) | Q(last_name__contains=name)
                                         | Q(fathers_name__contains=name) | Q(username__contains=name)))
         else:
             users = []
-            config = ConfigAPI()
-            config.init()
-            query = user.vk_link.split("/")[3]
-            vk_user = config.api.users.get(user_ids=query, fields="id")
-            user_id = vk_user[0]["id"]
-            friends = config.api.friends.get(user_id=user_id, fields="id, domain")
-            for friend in friends["items"]:
-                friend_model = User.objects.filter(
-                    vk_link__contains="vk.com/{}".format(friend["domain"])).first()
-                if friend_model is not None:
-                    users.append(friend_model)
-    p = Paginator(users, 2)
+            if user.vk_link is not None and user.vk_link != '':
+                config = ConfigAPI()
+                config.init()
+                query = user.vk_link.split("/")[3]
+                vk_user = config.api.users.get(user_ids=query, fields="id")
+                user_id = vk_user[0]["id"]
+                friends = config.api.friends.get(user_id=user_id, fields="id, domain")
+                for friend in friends["items"]:
+                    friend_model = User.objects.filter(
+                        vk_link__contains="vk.com/{}".format(friend["domain"])).first()
+                    if friend_model is not None:
+                        users.append(friend_model)
+        p = Paginator(users, 2)
     if request.GET.get("page") is not None:
         page = request.GET.get("page")
     else:
@@ -345,7 +343,9 @@ def find_friends(request):
                                             "page": page, "next_page": int(page) + 1, "prev_page": int(page) - 1,
                                             "hasNextPage": p.page(page).has_next(),
                                             "hasPrevPage": p.page(page).has_previous(),
-                                            "num_pages": p.num_pages})
+                                            "num_pages": p.num_pages,
+                                            "follows": enumerate(user.follows), "borrowers": enumerate(user.borrowers)
+                                            })
 
 
 @login_required(login_url=reverse_lazy('login'))
@@ -358,3 +358,13 @@ def add_friend(request, id):
 def delete_friend(request, id):
     Follow.objects.filter(follower_id=request.user.id, follow_user_id=id).first().delete()
     return redirect(reverse("friends"))
+
+
+@login_required(login_url=reverse_lazy('login'))
+def return_debt(request):
+    user = request.user
+    if user.can_pay_debt:
+        user.return_debt()
+        return redirect(reverse("profile"))
+    else:
+        return redirect(reverse("profile"))

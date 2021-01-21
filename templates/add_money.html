@@ -2,7 +2,7 @@
 
 {% block profile_content %}
     <section class="page-section" id="borrow">
-        <div class="container">
+        {% comment %}<div class="container">
             <h2 class="text-center mt-0">Пополнить баланс</h2>
             <hr class="divider my-4"/>
             <form id="money-form" name="money-form" action="{% url 'top_up' %}" method="post"
@@ -18,7 +18,8 @@
                     <button type="submit" class="themeBtn4">Пополнить</button>
                 </div>
             </form>
-        </div>
+        </div>{% endcomment %}
+        <h2>В настоящее время добавление денег на сайте невозможно, для добавления денег обратитесь к администратору</h2>
     </section>
 
     <script>

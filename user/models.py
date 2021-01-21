@@ -2,6 +2,8 @@ import uuid
 
 from django.contrib.auth.models import AbstractUser
 from django.db import models
+from django.db.models import Sum
+from django.utils import timezone
 
 
 def extract_file_extension(filename):
@@ -57,6 +59,37 @@ class User(AbstractUser):
         return User.objects.filter(
             id__in=(self.follow_items.values_list("follow_user")))
 
+    @property
+    def has_current_debts(self):
+        return len(MoneyLogs.objects.filter(destination=self, is_active=True)) > 0
+
+    def return_debt(self):
+        if self.can_pay_debt:
+            transactions = MoneyLogs.objects.filter(destination=self, is_active=True)
+            sum = transactions.aggregate(Sum('sum'))['sum__sum']
+            for transaction in transactions:
+                if transaction.operation == "LOAN":
+                    transaction.source.balance += transaction.sum + (transaction.sum * 200 / sum)
+                    transaction.source.save()
+                    self.balance -= transaction.sum + (transaction.sum * 200 / sum)
+                    self.save()
+                    MoneyLogs.objects.create(source=self, destination=transaction.source, operation="WITHDRAWAL",
+                                             sum=transaction.sum + (transaction.sum * 200 / sum), is_active=False)
+
+                transaction.is_active = False
+                transaction.save()
+            return True
+        else:
+            return False
+
+    @property
+    def can_pay_debt(self):
+        transactions = MoneyLogs.objects.filter(destination=self, is_active=True)
+        sum = transactions.aggregate(Sum('sum'))['sum__sum']
+        if sum is None:
+            sum = 0
+        return self.balance - sum >= 1E-8
+
     # @property
     # def friends(self):
     #     return User.objects.filter(
@@ -70,3 +103,17 @@ class Follow(models.Model):
     follower = models.ForeignKey(User, related_name='user', on_delete=models.CASCADE)
     follow_user = models.ForeignKey(User, related_name='follow_user', on_delete=models.CASCADE)
     date = models.DateTimeField(auto_now_add=True)
+
+
+class MoneyLogs(models.Model):
+    class OperationEnum(models.TextChoices):
+        REPLENISHMENT = "REPLENISHMENT"
+        LOAN = "LOAN"
+        WITHDRAWAL = "WITHDRAWAL"
+
+    destination = models.ForeignKey(User, on_delete=models.CASCADE, null=True, blank=True, related_name="borrower")
+    source = models.ForeignKey(User, on_delete=models.SET_NULL, null=True, blank=True, related_name="source")
+    operation = models.CharField(choices=OperationEnum.choices, max_length=255)
+    sum = models.FloatField()
+    date = models.DateField(default=timezone.now)
+    is_active = models.BooleanField(default=True)

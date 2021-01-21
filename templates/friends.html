@@ -2,12 +2,14 @@
 {% block profile_content %}
     <section class="page-section" id="friends">
         <h2 class="text-center">Поиск друзей</h2>
-        <div class="text-black-50 text-center">Вам предложены друзья на основании вашего ВКонтакте, но вы можете найти
+        <div class="text-black-50 text-center">Вам предложены друзья на основании вашего ВКонтакте, но вы можете
+            найти
             нужного вам пользователя через строку поиска
         </div>
         <hr>
         <form class="form" action="{% url 'friends' %}" method="get">
-            <input class="form-control mr-sm-2 col-md-10 col-lg-10 col-sm-10 col-xs-10" type="search" name="query"
+            <input class="form-control mr-sm-2 col-md-10 col-lg-10 col-sm-10 col-xs-10" type="search"
+                   name="query"
                    value="{{ request.GET.query }}" aria-label="Search">
             <button class="themeBtn4" type="submit">Найти</button>
         </form>
@@ -54,58 +56,215 @@
                     </div>
                 </div>
             {% endfor %}
-
-            {% if request.GET.query %}
-                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                   href="{% url 'friends' %}?query={{ request.GET.query }}&page=1">Первая страница</a>
-            {% else %}
-                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                   href="{% url 'friends' %}?page=1">Первая страница</a>
-            {% endif %}
-            {% if hasPrevPage %}
-                {% if request.GET.query %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ prev_page }}">Предыдущая
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end mb-5">
+                    {% if request.GET.query %}
+                        {% if hasPrevPage %}
+                            <li class="page-item">
+                                {% else %}
+                            <li class="page-item disabled">
+                        {% endif %}
+                    <a class="page-link"
+                       href="{% url 'friends' %}?query={{ request.GET.query }}&page=1">Первая
                         страница</a>
-                {% else %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="{% url 'friends' %}?page={{ prev_page }}">Предыдущая страница</a>
-                {% endif %}
-            {% else %}
-                {% if request.GET.query %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="">Предыдущая страница</a>
-                {% else %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="">Предыдущая страница</a>
-                {% endif %}
-            {% endif %}
-            {% if hasNextPage %}
-                {% if request.GET.query %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ next_page }}">Следующая
-                        Страница</a>
-                {% else %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="{% url 'friends' %}?page={{ next_page }}">Следующая страница</a>
-                {% endif %}
-            {% else %}
-                {% if request.GET.query %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="">Следующая Страница</a>
-                {% else %}
-                    <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                       href="">Следующая страница</a>
-                {% endif %}
-            {% endif %}
+                    </li>
+                    {% else %}
+                        {% if hasPrevPage %}
+                            <li class="page-item">
+                                {% else %}
+                            <li class="page-item disabled">
+                        {% endif %}
+                    <a class="page-link" href="{% url 'friends' %}">Первая страница</a>
+                    </li>
+                    {% endif %}
+                    {% if hasPrevPage %}
+                        <li class="page-item">
+                            {% else %}
+                        <li class="page-item disabled">
+                    {% endif %}
+                    {% if request.GET.query %}
+                        <a class="page-link"
+                           href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ prev_page }}">Предыдущая</a>
+                    {% else %}
+                        <a class="page-link"
+                           href="{% url 'friends' %}?page={{ prev_page }}">Предыдущая</a>
+                    {% endif %}
+                    </li>
+                    {% if hasNextPage %}
+                        <li class="page-item">
+                            {% else %}
+                        <li class="page-item disabled">
+                    {% endif %}
+                    {% if request.GET.query %}
+                        <a class="page-link"
+                           href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ next_page }}">Следующая</a>
+                    {% else %}
+                        <a class="page-link"
+                           href="{% url 'friends' %}?page={{ next_page }}">Следующая</a>
+                    {% endif %}
+                    </li>
+                    {% if request.GET.query %}
+                        {% if hasNextPage %}
+                            <li class="page-item">
+                                {% else %}
+                            <li class="page-item disabled">
+                        {% endif %}
+                    <a class="page-link"
+                       href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ num_pages }}">Последняя
+                        страница</a>
+                    </li>
+                    {% else %}
+                        {% if hasNextPage %}
+                            <li class="page-item">
+                                {% else %}
+                            <li class="page-item disabled">
+                        {% endif %}
+                    <a class="page-link" href="{% url 'friends' %}?page={{ num_pages }}">Последняя страница</a>
+                    </li>
+                    {% endif %}
+                </ul>
+            </nav>
+            <hr class="mt-5">
+            <div class="col-sm-12 col-md-12 col-lg-12 col-xs-12 mb-5">
+                <div class="mt-5 text-center container">
+                    <div class="row mb-2">
+                        <div class="col text-center">
+                            <h1 class="text-primary">Вы доверяете</h1>
+                            <p class="lead">Люди, которые могут взять у вас взаймы</p>
+                        </div>
+                    </div>
+                    <div class="row d-flex align-items-center">
+                        <div class="col-1 d-flex align-items-center justify-content-center">
+                            <a href="#carouselFollows" role="button" data-slide="prev">
+                                <div class="carousel-nav-icon">
+                                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129"
+                                         xmlns:xlink="http://www.w3.org/1999/xlink">
+                                        <path d="m88.6,121.3c0.8,0.8 1.8,1.2 2.9,1.2s2.1-0.4 2.9-1.2c1.6-1.6 1.6-4.2 0-5.8l-51-51 51-51c1.6-1.6 1.6-4.2 0-5.8s-4.2-1.6-5.8,0l-54,53.9c-1.6,1.6-1.6,4.2 0,5.8l54,53.9z"/>
+                                    </svg>
+                                </div>
+                            </a>
+                        </div>
+                        <div class="col-10">
+                            <!--Start carousel-->
+                            <div id="carouselFollows" class="carousel slide" data-ride="carousel">
+                                <div class="carousel-inner">
+                                    {% for i, u in follows %}
+                                        {% if i == 0 %}
+                                            <div class="carousel-item active">
+                                        {% else %}
+                                            <div class="carousel-item">
+                                        {% endif %}
+                                    <div class="row">
+                                        <div class="row">
+                                            <div class="col-sm-12">
+                                                <div class="row mt-3 mb-4 mx-2 mx-lg-2 mx-md-2 mx-sm-2 mx-xs-2">
+                                                    <div class="col-md-2 col-xs-2 col-sm-2 col-lg-2">
+                                                        <img alt="User Pic"
+                                                             src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg"
+                                                             id="profile-image1"
+                                                             class="img-circle img-fluid">
+                                                    </div>
+                                                    <div class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
 
-            {% if request.GET.query %}
-                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                   href="{% url 'friends' %}?query={{ request.GET.query }}&page={{ num_pages }}">Последняя страница</a>
-            {% else %}
-                <a class="themeBtn4 text-lg-right text-md-right text-sm-right text-sm-right"
-                   href="{% url 'friends' %}?page={{ num_pages }}">Последняя страница</a>
-            {% endif %}
-        </div>
+                                                        <div class="container">
+                                                            <h4>{{ u.last_name }} {{ u.first_name }} {{ u.fathers_name }}</h4>
+                                                            <p>на счете <b>{{ u.balance }}</b> рублей
+                                                            </p>
+                                                            <a href="{% url 'delete_friend' u.id %}"
+                                                               class="themeBtn4">Перестать доверять</a>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    </div>
+                                    {% endfor %}
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-1 d-flex align-items-center justify-content-center">
+                                <a href="#carouselFollows" data-slide="next">
+                                    <div class="carousel-nav-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129"
+                                             xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <path d="m40.4,121.3c-0.8,0.8-1.8,1.2-2.9,1.2s-2.1-0.4-2.9-1.2c-1.6-1.6-1.6-4.2 0-5.8l51-51-51-51c-1.6-1.6-1.6-4.2 0-5.81.6-1.6 4.2-1.6 5.8,0l53.9,53.9c1.6,1.6 1.6,4.2 0,5.8l-53.9,53.9z"/>
+                                        </svg>
+                                    </div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+                    <div class="mt-5 text-center container">
+                        <div class="row mb-2">
+                            <div class="col text-center">
+                                <h1 class="text-primary">Вам доверяют</h1>
+                                <p class="lead">Люди,у которых вы можете занять деньги</p>
+                            </div>
+                        </div>
+                        <div class="row d-flex align-items-center">
+                            <div class="col-1 d-flex align-items-center justify-content-center">
+                                <a href="#carouselBorrower" role="button" data-slide="prev">
+                                    <div class="carousel-nav-icon">
+                                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129"
+                                             xmlns:xlink="http://www.w3.org/1999/xlink">
+                                            <path d="m88.6,121.3c0.8,0.8 1.8,1.2 2.9,1.2s2.1-0.4 2.9-1.2c1.6-1.6 1.6-4.2 0-5.8l-51-51 51-51c1.6-1.6 1.6-4.2 0-5.8s-4.2-1.6-5.8,0l-54,53.9c-1.6,1.6-1.6,4.2 0,5.8l54,53.9z"/>
+                                        </svg>
+                                    </div>
+                                </a>
+                            </div>
+                            <div class="col-10">
+                                <!--Start carousel-->
+                                <div id="carouselBorrower" class="carousel slide" data-ride="carousel">
+                                    <div class="carousel-inner">
+                                        {% for i, u in borrowers %}
+                                            {% if i == 0 %}
+                                                <div class="carousel-item active">
+                                            {% else %}
+                                                <div class="carousel-item">
+                                            {% endif %}
+                                        <div class="row">
+                                            <div class="row">
+                                                <div class="col-sm-12">
+                                                    <div class="row mt-3 mb-4 mx-2 mx-lg-2 mx-md-2 mx-sm-2 mx-xs-2">
+                                                        <div class="col-md-2 col-xs-2 col-sm-2 col-lg-2">
+                                                            <img alt="User Pic"
+                                                                 src="https://x1.xingassets.com/assets/frontend_minified/img/users/nobody_m.original.jpg"
+                                                                 id="profile-image1"
+                                                                 class="img-circle img-fluid">
+                                                        </div>
+                                                        <div class="col-md-10 col-xs-10 col-sm-10 col-lg-10">
+
+                                                            <div class="container">
+                                                                <h4>{{ u.last_name }} {{ u.first_name }} {{ u.fathers_name }}</h4>
+                                                                <p>на счете <b>{{ u.balance }}</b> рублей
+                                                                </p>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        </div>
+                                        {% endfor %}
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col-1 d-flex align-items-center justify-content-center">
+                                    <a href="#carouselBorrower" data-slide="next">
+                                        <div class="carousel-nav-icon">
+                                            <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 129 129"
+                                                 xmlns:xlink="http://www.w3.org/1999/xlink">
+                                                <path d="m40.4,121.3c-0.8,0.8-1.8,1.2-2.9,1.2s-2.1-0.4-2.9-1.2c-1.6-1.6-1.6-4.2 0-5.8l51-51-51-51c-1.6-1.6-1.6-4.2 0-5.81.6-1.6 4.2-1.6 5.8,0l53.9,53.9c1.6,1.6 1.6,4.2 0,5.8l-53.9,53.9z"/>
+                                            </svg>
+                                        </div>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr>
+
     </section>
 {% endblock %}

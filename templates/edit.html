@@ -40,12 +40,20 @@
                             <label for="id_instagram_link">Ссылка на инстаграм:</label>
                             <input type="url" class="form-control" name="instagram_link"
                                    value="{{ user.instagram_link }}" maxlength="200" id="id_instagram_link">
+                            <div id="instaHelpBlock" class="form-text">
+                                На данный момент поиск друзей через Instagram не работает, но вы можете оставить ссылку на
+                                будущее
+                            </div>
                         </div>
                     {% else %}
                         <div class="form-group col-md-6">
                             <label for="id_instagram_link">Ссылка на инстаграм:</label>
                             <input type="url" class="form-control" name="instagram_link" maxlength="200"
                                    id="id_instagram_link">
+                            <div id="instaHelpBlock" class="form-text">
+                                На данный момент поиск друзей через Instagram не работает, но вы можете оставить ссылку на
+                                будущее
+                            </div>
                         </div>
                     {% endif %}
                     {% if user.vk_link is not None %}

@@ -3,7 +3,7 @@
 
     <section class="page-section" id="borrow">
         <div class="container">
-            <h2 class="text-center mt-0">Изменение профиля</h2>
+            <h2 class="text-center mt-0">Введение паспортных данных</h2>
             <hr class="divider my-4"/>
             <form id="edit-form" name="edit-form" action="{% url 'passport' %}" method="post"
                   enctype="multipart/form-data">
@@ -20,6 +20,9 @@
                     <div class="form-group col-md-4">
                         <label for="id_when">Когда выдан:</label>
                         <input type="text" name="when" class="form-control" required="" id="id_when">
+                        <div id="dateHelpBlock" class="form-text">
+                                Введите дату в одном из 3 форматов: дд.мм.гггг, дд/мм/гггг, дд-мм-гггг
+                            </div>
                     </div>
                 </div>
                 <div class="form-row">
