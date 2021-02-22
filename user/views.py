@@ -327,7 +327,7 @@ def find_friends(request):
                 iof=Concat('first_name', V(' '), 'fathers_name', V(' '), 'last_name', V(' '))
             ).filter(~Q(id=user.id) & (Q(first_name__icontains=name) | Q(last_name__icontains=name)
                                        | Q(fathers_name__icontains=name) | Q(username__icontains=name)
-                                       | Q(fio__contains=name) | Q(ifo__contains=name) | Q(iof__contains=name))) # создаем фио в разных форматах и проверяем по ним поиск
+                                       | Q(fio__icontains=name) | Q(ifo__icontains=name) | Q(iof__icontains=name))) # создаем фио в разных форматах и проверяем по ним поиск
         else:
             users = []
             if user.vk_link is not None and user.vk_link != '':
