@@ -7,7 +7,8 @@ from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ValidationError
 from django.core.paginator import Paginator
-from django.db.models import Count, Q
+from django.db.models import Count, Q, Value as V
+from django.db.models.functions import Concat
 from django.shortcuts import render, redirect
 
 # Create your views here.
@@ -207,10 +208,13 @@ def get_money(request):
                     user.save()
                     return redirect("profile")
                 else:
-                    return render(request, "get_money.html", {"user": user, "limit": limit, "borrowers": enumerate(user.borrowers), "form": MoneyForm()})
+                    return render(request, "get_money.html",
+                                  {"user": user, "limit": limit, "borrowers": enumerate(user.borrowers),
+                                   "form": MoneyForm()})
 
         else:
-            return render(request, "get_money.html", {"user": user, "limit": limit, "borrowers": enumerate(user.borrowers), "form": MoneyForm()})
+            return render(request, "get_money.html",
+                          {"user": user, "limit": limit, "borrowers": enumerate(user.borrowers), "form": MoneyForm()})
     else:
         return redirect("profile")
 
@@ -317,8 +321,13 @@ def find_friends(request):
         name = request.GET.get("query")
         user = request.user
         if name is not None and name != '':
-            users = User.objects.filter(~Q(id=user.id) & (Q(first_name__contains=name) | Q(last_name__contains=name)
-                                        | Q(fathers_name__contains=name) | Q(username__contains=name)))
+            users = User.objects.annotate(
+                ifo=Concat('first_name', V(' '), 'last_name', V(' '), 'fathers_name', V(' ')),
+                fio=Concat('last_name', V(' '), 'first_name', V(' '), 'fathers_name', V(' ')),
+                iof=Concat('first_name', V(' '), 'fathers_name', V(' '), 'last_name', V(' '))
+            ).filter(~Q(id=user.id) & (Q(first_name__icontains=name) | Q(last_name__icontains=name)
+                                       | Q(fathers_name__icontains=name) | Q(username__icontains=name)
+                                       | Q(fio__contains=name) | Q(ifo__contains=name) | Q(iof__contains=name))) # создаем фио в разных форматах и проверяем по ним поиск
         else:
             users = []
             if user.vk_link is not None and user.vk_link != '':
