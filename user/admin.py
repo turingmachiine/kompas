@@ -22,7 +22,6 @@ class FollowAdmin(ModelAdmin):
 
 
 class PassportListFilter(SimpleListFilter):
-
     title = _("passport")
     parameter_name = 'passport'
 
@@ -38,10 +37,10 @@ class PassportListFilter(SimpleListFilter):
             return queryset.all()
 
 
-
 @admin.register(User)
 class UserAdmin(ModelAdmin):
-    list_display = ['username', 'first_name', 'last_name', 'fathers_name', 'email', 'balance', 'credit_card_number', 'has_passport', 'is_confirmed']
+    list_display = ['username', 'first_name', 'last_name', 'fathers_name', 'email', 'balance', 'credit_card_number',
+                    'has_passport', 'is_confirmed']
     list_filter = ['is_confirmed', PassportListFilter]
     actions = [return_money]
     ordering = ['username', 'last_name', 'first_name', 'fathers_name', 'balance']
@@ -50,7 +49,6 @@ class UserAdmin(ModelAdmin):
         if obj.pk:
             orig_obj = User.objects.get(pk=obj.pk)
             if obj.password != orig_obj.password:
-
                 obj.set_password(obj.password)
         else:
             obj.set_password(obj.password)
@@ -58,7 +56,6 @@ class UserAdmin(ModelAdmin):
 
 
 class SubjectListFilter(admin.SimpleListFilter):
-
     title = _('passport subject')
 
     parameter_name = 'subject'
@@ -81,14 +78,13 @@ class SubjectListFilter(admin.SimpleListFilter):
 
 @admin.register(Passport)
 class PassportAdmin(ModelAdmin):
-    list_display = ['id','series', 'number', 'when', 'who', 'code_who']
+    list_display = ['id', 'series', 'number', 'when', 'who', 'code_who']
     list_filter = ['series', SubjectListFilter, 'when']
     date_hierarchy = 'when'
     ordering = ['id']
 
 
 class LoanReturnFilter(SimpleListFilter):
-
     title = _('loan return')
 
     parameter_name = 'loan_return'
@@ -98,9 +94,11 @@ class LoanReturnFilter(SimpleListFilter):
 
     def queryset(self, request, queryset):
         if self.value() == 'yes':
-            return queryset.filter(Q(date__contains=datetime.date(datetime.now() - timedelta(days=30))) & Q(is_active=True))
+            return queryset.filter(
+                Q(date__contains=datetime.date(datetime.now() - timedelta(days=30))) & Q(is_active=True))
         elif self.value() == 'no':
-            return queryset.exclude(Q(date__contains=datetime.date(datetime.now() - timedelta(days=30))) & Q(is_active=True))
+            return queryset.exclude(
+                Q(date__contains=datetime.date(datetime.now() - timedelta(days=30))) & Q(is_active=True))
         else:
             return queryset.all()
 
@@ -119,10 +117,12 @@ def make_inactive(model_admin, request, queryset):
         log.save()
 
 
-
 @admin.register(MoneyLogs)
 class MoneyLogs(ModelAdmin):
-    list_display = ['source', 'destination', 'sum', 'is_active', 'date', 'operation']
-    list_filter = ['is_active', 'date', 'operation', 'source', 'destination', LoanReturnFilter]
+    list_display = ['source', 'destination', 'sum', 'is_active', 'date', 'operation', 'return_date']
+    list_filter = ['is_active', LoanReturnFilter, 'date', 'operation', 'source', 'destination']
     actions = [return_debt, make_inactive]
     date_hierarchy = 'date'
+
+    def return_date(self, obj):
+        return obj.date + timedelta(days=30)
